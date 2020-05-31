@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import img_to_array,load_img
-from tensorflow.keras.applications.vgg19 import VGG19
-from tensorflow.keras.applications.vgg19 import preprocess_input
+from tensorflow.keras.applications.xception import Xception,preprocess_input
+from tensorflow.keras.models import Model
 import tensorflow.keras.backend as K
 import pickle5 as pickle
 import os
@@ -41,30 +41,34 @@ def clean_text_data():
 # clean_text_data()
 
 def image_data():
+    
+
     img_feat=dict()
     for name in os.listdir("Flicker8k_Dataset"):
-        model=VGG19(weights='imagenet',include_top=False)
-        print(model.summary())
-        image=load_img(os.path.join("Flicker8k_Dataset",name),target_size=(256,256))
+        image=load_img(os.path.join("Flicker8k_Dataset",name),target_size=(299,299))
         image=img_to_array(image)
         image=np.expand_dims(image,axis=0)
         image=preprocess_input(image)
+
+        model=Xception(weights='imagenet')
+        model=Model(inputs=model.inputs,outputs=model.layers[-2].output)
         feat=model.predict(image)
-    
+        K.clear_session()
+
         id=name.split('.')[0]
         img_feat[id]=feat
         print(id,end=" ")
-        K.clear_session()
-    pickle.dump(img_feat,open('features.pkl','wb'))
+        
+    np.save("img_features.npy",img_feat)
 
 # feat=np.load('img_features.npy',allow_pickle=True).item()
 # print(feat['1000268201_693b08cb0e'])
 
 
 
-def create_test_set():
+def create_train_set(doc):
+    doc=open(doc)
     #Separate out the train set based on the doc file provided
-    doc=open("Data/Flickr_8k.trainImages.txt")
     feat=np.load('img_features.npy',allow_pickle=True).item()
     trainid=[]
     for line in doc:
@@ -77,7 +81,11 @@ def create_test_set():
         if(id in trainid):
             traincaptions[id]=captions[id]
             trainfeat[id]=feat[id]
-
+    doc.close()
     return traincaptions,trainfeat
+    
+
+
+
 
 
