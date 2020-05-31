@@ -16,32 +16,32 @@ def create_tokens(doc):
     tk.fit_on_texts(caplist)
     return tk
 
-def data_generator(tk,doc,batch_size):
+def data_generator(tk,doc):
     traincap,trainfeat=de.create_train_set(doc)
     n=0
     vocab_size=len(tk.word_counts.keys())+1
-    X1,X2,Y=[],[],[]
     print(len(traincap.keys()))
-    while 1:
+    X1,X2,Y=[],[],[]
+    for id,caplist in traincap.items():
         n+=1
-        for id,caplist in traincap.items():
-            n+=1
-            print(n)
-            for cap in caplist:
-                seq=tk.texts_to_sequences([cap])[0]
-                for i in range(1,len(seq)):
-                    inseq=seq[:i]
-                    inseq=pad_sequences([inseq],maxlen=34)[0]
-                    outseq=seq[i]
-                    outseq=to_categorical([outseq],num_classes=vocab_size)[0]
-                    X1.append(inseq)
-                    X2.append(trainfeat[id][0])
-                    Y.append(outseq)
-            if n==num_photos_per_batch:
-                yield [[array(X1), array(X2)], array(y)]
-                X1, X2, y = list(), list(), list()
-                n=0
-                
+        print(n)
+        for cap in caplist:
+            seq=tk.texts_to_sequences([cap])[0]
+            for i in range(1,len(seq)):
+                inseq=seq[:i]
+                inseq=pad_sequences([inseq],maxlen=34)[0]
+                outseq=seq[i]
+                outseq=to_categorical([outseq],num_classes=vocab_size)[0]
+                X1.append(inseq)
+                X2.append(trainfeat[id][0])
+                Y.append(outseq)
+        if(n==1000):
+            print("Done")
+            np.save("Dev_X1.npy",np.array(X1))
+            np.save("Dev_X2.npy",np.array(X2))
+            np.save("Dev_Y.npy",np.array(Y))
+            return
+
 
 
 def glovevec():

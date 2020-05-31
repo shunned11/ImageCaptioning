@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import Utilities as ut
+import os
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -18,12 +19,21 @@ tk=ut.create_tokens(doc1)
 vocabulary_size = len(tk.word_counts.keys())+1
 emb_matrix=ut.embedding(vocabulary_size,tk)
 
+TX1=np.load("Train_X1.npy")
+TX2=np.load("Train_X2.npy")
+TY=np.load("Train_Y.npy")
 
+DX1=np.load("Dev_X1.npy")
+DX2=np.load("Dev_X2.npy")
+DY=np.load("Dev_Y.npy")
+
+print(DX1.shape)
+print(TX1.shape)
 
 train_steps=120
 validation_steps=20
 
-callbackslist=[TensorBoard(log_dir='./logs'),ModelCheckpoint(filepath='Model.h5',monitor='val_loss',save_best_only=True)]
+callbackslist=[TensorBoard(log_dir='logs'),ModelCheckpoint(filepath='Model.h5',monitor='val_loss',save_best_only=True)]
 
 
 input1=Input(shape=(2048,))
@@ -46,6 +56,9 @@ model.summary()
 model.layers[1].set_weights([emb_matrix])
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
+model.fit([TX2,TX1],TY,epochs=10,callbacks=callbackslist,batch_size=64,validation_data=([DX2,DX1],DY))
+
+# making a directory models to save our models
 
 
-model.fit(Xtrain,Ytrain,epochs=20,callbacks=callbackslist,validation_data=(Xval,Yval))
+
