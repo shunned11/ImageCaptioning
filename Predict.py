@@ -27,7 +27,7 @@ def greedy_search(feat,tk,model):
     reverse_word_map = dict(map(reversed, tk.word_index.items()))
     in_seq="startseq"
     print("Greedy Search")
-    
+
     for i in range(34):
         seq=tk.texts_to_sequences([in_seq])[0]
         seq=pad_sequences([seq],maxlen=34)
@@ -48,7 +48,10 @@ def beam_search(feat,tk,model,beam_width):
     # prob=np.full((beam_width,1),1)
     finalpred=[]
     finalprob=[]
-    prob=np.array([[1],[0],[0]],dtype=np.float64)
+    prob=np.array([[1]],dtype=np.float64)
+    for i in range(beam_width-1):
+        prob=np.append(prob,[[0.0]],axis=0)
+        
     for i in range(34):
         allseq=np.empty((beam_width,7579))
         j=0
@@ -78,6 +81,7 @@ def beam_search(feat,tk,model,beam_width):
             l+=1
  
         in_sequences=temparr
+    print(finalpred)
     finalpred=finalpred[:10]
     finalprob=np.array(finalprob)
     finalprob=finalprob.reshape((finalprob.shape[0],))[:10]
@@ -90,6 +94,6 @@ doc="Data/Flickr_8k.trainImages.txt"
 feat=extract_features("Example.jpg")
 tk=ut.create_tokens(doc)
 model=load_model("Model.h5")
-beam_search(feat,tk,model,3)
+beam_search(feat,tk,model,4)
 print()
 greedy_search(feat,tk,model)
