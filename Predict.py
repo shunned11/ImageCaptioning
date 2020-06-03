@@ -25,7 +25,7 @@ def extract_features(path):
 
 def greedy_search(feat,tk,model):
     reverse_word_map = dict(map(reversed, tk.word_index.items()))
-    in_seq="start"
+    in_seq="startseq"
     for i in range(34):
         seq=tk.texts_to_sequences([in_seq])[0]
         seq=pad_sequences([seq],maxlen=34)
@@ -33,16 +33,53 @@ def greedy_search(feat,tk,model):
         print(curseq[0])
         word=np.argmax(curseq)
         word=reverse_word_map[word]
-        print(word,end=" ")
-        in_seq=in_seq+" "+word
-        if(word=="end"):
-            print(i)
+        if word is None:
             break
+        in_seq=in_seq+" "+word
+        if(word=="endseq"):
+            break
+    print(in_seq)
 
-def beam_search():
-    pass
+
+def beam_search(feat,tk,model,beam_width):
+    reverse_word_map = dict(map(reversed, tk.word_index.items()))
+    in_sequences=np.full((beam_width),"startseq",dtype=object)
+    # prob=np.full((beam_width,1),1)
+    prob=np.array([[1],[0],[0],[0],[0],[0],[0],[0],[0],[0]],dtype=np.float64)
+    for i in range(34):
+        allseq=np.empty((beam_width,7579))
+        j=0
+        for in_seq in in_sequences:
+            seq=tk.texts_to_sequences([in_seq])[0]
+            seq=pad_sequences([seq],maxlen=34)
+            curseq=model.predict([feat,seq],verbose=0)
+            allseq[j][:]=curseq
+            j+=1
+        temp=-(np.log(prob)+np.log(allseq))/7579
+        temp=temp.reshape(beam_width*7579,1)
+        topprob=(np.argsort(temp,axis=0)[:beam_width]).reshape((beam_width,))
+        l=0
+        temparr=np.full((beam_width),"",dtype=object)
+
+        for k in topprob:
+            prob[l]=temp[k]
+            tempstr=""
+            word=reverse_word_map[k%7579]
+            tempstr=in_sequences[int(k/7579)]+' '+word
+            temparr[l]=tempstr
+            l+=1
+            if(word=="endseq"):
+                return
+        in_sequences=temparr
+        print(in_sequences)
+
+
 doc="Data/Flickr_8k.trainImages.txt"
 feat=extract_features("Example.jpg")
 tk=ut.create_tokens(doc)
 model=load_model("Model.h5")
+beam_search(feat,tk,model,10)
+print()
+print()
+print()
 greedy_search(feat,tk,model)

@@ -6,21 +6,18 @@ import numpy as np
 
 def create_tokens(doc):    
     traincap,trainfeat=de.create_train_set(doc)
-    # print(type(traincap))
     caplist=[]
     for id in traincap.keys():
         for cap in traincap[id]:
-            caplist.append("<START>"+cap+"<END>")
-    
+            caplist.append(cap)
     tk=Tokenizer()
     tk.fit_on_texts(caplist)
     return tk
 
-def data_generator(tk,doc):
+def data_generator(tk,doc,name):
     traincap,trainfeat=de.create_train_set(doc)
     n=0
     vocab_size=len(tk.word_counts.keys())+1
-    print(len(traincap.keys()))
     X1,X2,Y=[],[],[]
     for id,caplist in traincap.items():
         n+=1
@@ -35,13 +32,22 @@ def data_generator(tk,doc):
                 X1.append(inseq)
                 X2.append(trainfeat[id][0])
                 Y.append(outseq)
-        if(n==1000):
+        if(n==len(traincap.keys())):
             print("Done")
-            np.save("Dev_X1.npy",np.array(X1))
-            np.save("Dev_X2.npy",np.array(X2))
-            np.save("Dev_Y.npy",np.array(Y))
+            np.save("{}_{}.npy".format(name,"X1"),np.array(X1))
+            del X1
+            np.save("{}_{}.npy".format(name,"X2"),np.array(X2))
+            del X2
+            np.save("{}_{}.npy".format(name,"Y"),np.array(Y))
+            del Y
             return
 
+if __name__ == "__main__":
+    doc1="Data/Flickr_8k.trainImages.txt"
+    doc2="Data/Flickr_8k.devImages.txt"
+    tk=create_tokens(doc1)
+    data_generator(tk,doc1,"Train")
+    data_generator(tk,doc2,"Dev")
 
 
 def glovevec():

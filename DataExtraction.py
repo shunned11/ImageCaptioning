@@ -17,7 +17,7 @@ def text_data():
         id=token[0]
         id=id.split('.')[0]
         caplist=token[1:]
-        capstring=' '.join(caplist)
+        capstring='startseq '+' '.join(caplist)+' endseq'
         if id not in captions:
             captions[id]=list()
 

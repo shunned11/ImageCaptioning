@@ -54,7 +54,7 @@ outputs=Dense(vocabulary_size,activation='softmax')(decoder2)
 model=Model(inputs=[input1,input2],outputs=outputs)
 model.summary()
 model.layers[1].set_weights([emb_matrix])
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='binary_crossentropy', optimizer='adam')
 
 model.fit([TX2,TX1],TY,epochs=10,callbacks=callbackslist,batch_size=64,validation_data=([DX2,DX1],DY))
 
