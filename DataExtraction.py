@@ -59,7 +59,7 @@ def image_data():
         img_feat[id]=feat
         print(id,end=" ")
         
-    np.save("img_features.npy",img_feat)
+    np.save("ExtractedData/img_features.npy",img_feat)
 
 # feat=np.load('img_features.npy',allow_pickle=True).item()
 # print(feat['1000268201_693b08cb0e'])
@@ -69,7 +69,7 @@ def image_data():
 def create_train_set(doc):
     doc=open(doc)
     #Separate out the train set based on the doc file provided
-    feat=np.load('img_features.npy',allow_pickle=True).item()
+    feat=np.load('ExtractedData/img_features.npy',allow_pickle=True).item()
     trainid=[]
     for line in doc:
         line=line.split(".")
@@ -86,6 +86,8 @@ def create_train_set(doc):
     
 
 
-
+if __name__ == "__main__":
+    #To generate image data and save it as img_features.npy
+    image_data()
 
 

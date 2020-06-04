@@ -36,6 +36,7 @@ def greedy_search(feat,tk,model):
         word=reverse_word_map[word]
         if word is None:
             break
+
         in_seq=in_seq+" "+word
         if(word=="endseq"):
             print(in_seq)
@@ -89,11 +90,11 @@ def beam_search(feat,tk,model,beam_width):
     for i in best:
         print(finalpred[i])
 
-
-doc="Data/Flickr_8k.trainImages.txt"
-feat=extract_features("Example.jpg")
-tk=ut.create_tokens(doc)
-model=load_model("Model.h5")
-beam_search(feat,tk,model,4)
-print()
-greedy_search(feat,tk,model)
+if __name__ == "__main__":
+    doc="Data/Flickr_8k.trainImages.txt"
+    feat=extract_features("Example.jpg")
+    tk=ut.create_tokens(doc)
+    model=load_model("Model.h5")
+    beam_search(feat,tk,model,4)
+    print()
+    greedy_search(feat,tk,model)
