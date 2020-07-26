@@ -17,3 +17,4 @@ https://drive.google.com/drive/folders/1TYuE1EC1EQz6xWzjVpdgErh1v2ScHgu6?usp=sha
 The input image is passed through a pre-trained CNN(in this case the Xception Model pretrained on the ImageNet dataset is used) followed by a dropout layer and then a fully connected layer. The partial caption is passed through an embedding layer(GloVe Vector in this case) followed by two layers of a dropout layer and a bidirectional LSTM.
 
 The ouptut of both the LSTM layers(in case of the caption model) and dense layer(in case of the image model) are then merged to ouput a fully connected layer
+![Model](/Images/Model.jpg)
