@@ -18,3 +18,6 @@ The input image is passed through a pre-trained CNN(in this case the Xception Mo
 
 The ouptut of both the LSTM layers(in case of the caption model) and dense layer(in case of the image model) are then merged to ouput a fully connected layer
 ![Model](/Images/Model.jpg)
+
+# Examples
+![Example1](/Images/Example.jpg)
