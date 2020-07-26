@@ -22,5 +22,6 @@ The ouptut of both the LSTM layers(in case of the caption model) and dense layer
 # Examples
 ![Example1](/Images/Example1.jpg)    
 ![Caption1](/Images/Caption1.jpg)
+
 ![Example2](/Images/Example2.jpg)
 ![Caption2](/Images/Caption2.jpg)
